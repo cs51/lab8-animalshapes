@@ -133,7 +133,7 @@ unregisters the listener with that id from the event if there is
 one. If there is no listener with that id, do nothing.
 ......................................................................*)
 
-  let rec remove_listener (evt : 'a event) (i : id) : unit =
+  let remove_listener (evt : 'a event) (i : id) : unit =
     let helper (input : 'a waiter) = input.id <> i in
     evt := (List.filter helper !evt)
 
@@ -172,7 +172,7 @@ Exercise 4: Given your implementation of Event, create a new event
 called "newswire" that should pass strings to the event handlers.
 ......................................................................*)
 
-let newswire = fun _ -> failwith "newswire not implemented" ;;
+let newswire = WEvent.new_event () ;;
 
 (* News organizations might want to register event listeners to the
 newswire so that they might report on stories. Below are functions
@@ -191,6 +191,8 @@ newswire event.
 ......................................................................*)
 
 (* .. *)
+let fnn_id = WEvent.add_listener newswire fakeNewsNetwork ;;
+let bf_id = WEvent.add_listener newswire buzzFake ;;
 
 (* Here are some headlines to play with. *)
 
@@ -204,6 +206,9 @@ headlines, and observe what happens!
 ......................................................................*)
 
 (* .. *)
+let _ = WEvent.fire_event newswire h1 ;;
+let _ = WEvent.fire_event newswire h2 ;;
+let _ = WEvent.fire_event newswire h3 ;;
 
 (* Imagine now that you work at Facebook, and you're growing concerned
 with the proliferation of fake news. To combat the problem, you decide
@@ -217,13 +222,15 @@ Exercise 7: Remove the newswire listeners that were previously registered.
 ......................................................................*)
 
 (* .. *)
+let _ = WEvent.remove_listener newswire fnn_id ;;
+let _ = WEvent.remove_listener newswire bf_id ;;
 
 (*......................................................................
 Exercise 8: Create a new event called publish to signal that all
 stories should be published. The event should be a unit WEvent.event.
 ......................................................................*)
 
-let publish = fun _ -> failwith "publish not implemented" ;;
+let publish = WEvent.new_event () ;;
 
 (*......................................................................
 Exercise 9: Write a function receive_report to handle new news
